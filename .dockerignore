@@ -1,0 +1,11 @@
+build
+.gradle
+traccar-web/node_modules
+traccar-web/.git
+traccar-web/.github
+traccar-web/modern/build
+traccar-web/modern/node_modules
+traccar-web/web/lib
+.idea
+.github
+.git
