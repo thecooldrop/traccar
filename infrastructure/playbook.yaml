@@ -1,0 +1,57 @@
+- hosts: all
+  name: InstallDocker
+  remote_user: ubuntu
+  become: true
+  vars:
+    container_name: traccar
+    image_repository: thecooldrop/software
+    image_tag: traccar-9aab0b3141546ebb2a8e1af265197f48ec5d942d
+  tasks:
+  - name: Install aptitude
+    ansible.builtin.apt:
+      name: aptitude
+      state: latest
+      update_cache: true
+  - name: Install requred system packages
+    ansible.builtin.apt:
+      name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      state: latest
+      update_cache: true
+  - name: Add Docker GPG apt key
+    ansible.builtin.apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  - name: Add Docker Repository
+    ansible.builtin.apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu focal stable
+      state: present
+  - name: Update apt and install docker-cer
+    ansible.builtin.apt:
+      name: docker-ce
+      state: latest
+      update_cache: true
+  - name: Install docker module for python3
+    pip:
+      name: 
+  - name: Dockerhub Login
+    community.docker.docker_login:
+      username: "{{ docker_username }}"
+      password: "{{ docker_password }}"
+  - name: Pull Docker image for application
+    community.docker.docker_image:
+      name: "{{ image_repository }}:{{image_tag}}"
+      source: pull
+  - name: Run the Docker image
+    community.docker.docker_container:
+      name: traccar
+      ports:
+        - 80:8082
+      image: "{{ image_repository }}:{{image_tag}}"
+      state: started

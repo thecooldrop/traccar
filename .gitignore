@@ -12,3 +12,4 @@ out
 build
 infrastructure/.terraform
 infrastructure/*.tfstate
+infrastructure/group_vars/traccar-servers/secret*.yaml
