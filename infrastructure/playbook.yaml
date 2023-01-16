@@ -39,20 +39,30 @@
       update_cache: true
   - name: Install docker module for python3
     pip:
-      name: 
+      name:
+  - name: Configure user
+    ansible.builtin.user:
+      name: runner
+      create_home: yes
+      state: present
+  - name: Create folder owned by runner user
+    ansible.builtin.file:
+      path: /home/user/runner
+      owner: runner
+      mode: "u=rwx,g=r,o=r"
+      state: directory
   - name: Dockerhub Login
     community.docker.docker_login:
       username: "{{ docker_username }}"
       password: "{{ docker_password }}"
   - name: Pull Docker image for application
     community.docker.docker_image:
-      name: "{{ image_repository }}:{{image_tag}}"
+      name: "{{ image_repository }}:{{ image_tag }}"
       source: pull
   - name: Run the Docker image
     community.docker.docker_container:
       name: traccar
       ports:
         - 80:8082
-      image: "{{ image_repository }}:{{image_tag}}"
+      image: "{{ image_repository }}:{{ image_tag }}"
       state: started
-
