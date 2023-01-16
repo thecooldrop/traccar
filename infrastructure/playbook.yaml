@@ -12,7 +12,7 @@
       name: aptitude
       state: latest
       update_cache: true
-  - name: Install requred system packages
+  - name: Install required system packages
     ansible.builtin.apt:
       name:
       - apt-transport-https
@@ -55,3 +55,4 @@
         - 80:8082
       image: "{{ image_repository }}:{{image_tag}}"
       state: started
+
