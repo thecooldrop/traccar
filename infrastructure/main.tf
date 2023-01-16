@@ -45,37 +45,6 @@ resource "random_password" "traccar_database_password" {
   special = false
 }
 
-resource "aws_secretsmanager_secret" "traccar_database_credentials" {
-  name = "TraccarDatabaseCredentials"
-  description = "Secret to store the database credentials for traccar server"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "traccar_database_credentials_v0" {
-  secret_id = aws_secretsmanager_secret.traccar_database_credentials.id
-  secret_string = jsonencode({
-    username = "postgres"
-    password = random_password.traccar_database_password.result
-  })
-}
-
-resource "random_pet" "final_database_snapshot_name" {
-}
-
-resource "aws_lightsail_database" "traccar_database" {
-  relational_database_name = "TraccarApplicationDatabase"
-  availability_zone = "eu-central-1a"
-  master_database_name = "application"
-  master_username = "postgres"
-  master_password = random_password.traccar_database_password.result
-  blueprint_id = "postgres_12"
-  bundle_id = "micro_2_0"
-  publicly_accessible = false
-  skip_final_snapshot = false
-  final_snapshot_name = random_pet.final_database_snapshot_name.id
-}
-
-
 resource "local_sensitive_file" "lightsail_private_key" {
   content = aws_lightsail_key_pair.ligtsail_key.private_key
   filename = "/home/vanio/LightsailPrivateKey.pem"
